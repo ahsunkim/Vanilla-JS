@@ -103,7 +103,7 @@
 //   }
 // });
 
-// Progress Bar
+// Guessing Game
 let elem = document.getElementById('loadingPart');
 let id = null;
 let width = 0;
@@ -125,6 +125,22 @@ function generateWinningNumber() {
   return Math.ceil(Math.random() * 100);
 }
 
+function shuffle(array) {
+  var m = array.length,
+    t,
+    i;
+  // While there remain elements to shuffle…
+  while (m) {
+    // Pick a remaining element…
+    i = Math.floor(Math.random() * m--);
+    // And swap it with the current element.
+    t = array[m];
+    array[m] = array[i];
+    array[i] = t;
+  }
+  return array;
+}
+
 class guessingGame {
   constructor() {
     this.playersGuess = null;
@@ -141,14 +157,14 @@ class guessingGame {
       let text = document.createTextNode(
         `${num} is not a number between 0 to 100!`
       );
-      let newH1 = document.createElement('p');
-      newH1.appendChild(text);
+      let newP = document.createElement('p');
+      newP.appendChild(text);
       if (document.querySelector('#info').children.length) {
         document
           .querySelector('#info')
-          .replaceChild(newH1, document.querySelector('#info').children[0]);
+          .replaceChild(newP, document.querySelector('#info').children[0]);
       } else {
-        document.querySelector('#info').appendChild(newH1);
+        document.querySelector('#info').appendChild(newP);
       }
     } else {
       this.playersGuess = numConverted;
@@ -158,10 +174,32 @@ class guessingGame {
   difference() {
     return Math.abs(this.playersGuess - this.winningNumber);
   }
+  giveHint() {
+    const hintShuffle = shuffle([
+      generateWinningNumber(),
+      generateWinningNumber(),
+      this.winningNumber,
+    ]);
+    let newElem = document.createElement('p');
+    let newElemText = document.createTextNode(
+      `Your hint: ${hintShuffle[0]}, ${hintShuffle[1]}, ${hintShuffle[2]}`
+    );
+    newElem.appendChild(newElemText);
+    let infoElem = document.querySelector('#info');
+    if (infoElem.children.length) {
+      infoElem.replaceChild(newElem, infoElem.children[0]);
+    } else {
+      infoElem.appendChild(newElem);
+    }
+    let hintButton = document.querySelector('#hint');
+    hintButton.disabled = true;
+  }
   checkGuess() {
     let phrase = '';
     if (this.playersGuess === this.winningNumber) {
-      phrase = 'You won!';
+      phrase = `You won! ${this.winningNumber} was the winning number!`;
+      let mySubmitButton = document.querySelector('#submitGuess');
+      mySubmitButton.disabled = true;
     } else if (this.pastGuesses.includes(this.playersGuess)) {
       phrase = 'You already guessed that number.';
     } else {
@@ -173,7 +211,7 @@ class guessingGame {
       document.querySelector('#guessList').appendChild(newGuess);
 
       if (this.pastGuesses.length === 5) {
-        phrase = 'You lost.';
+        phrase = `You lost. The winning number was ${this.winningNumber}.`;
 
         let mySubmitButton = document.querySelector('#submitGuess');
         let myHintButton = document.querySelector('#hint');
@@ -192,11 +230,26 @@ class guessingGame {
         }
       }
     }
+    let gamePhrase = document.querySelector('#info');
+    let newGamePhrase = document.createElement('p');
+    let newGamePhraseTextNode = document.createTextNode(phrase);
+    newGamePhrase.appendChild(newGamePhraseTextNode);
+    if (gamePhrase.children.length) {
+      gamePhrase.replaceChild(newGamePhrase, gamePhrase.children[0]);
+    } else {
+      gamePhrase.appendChild(newGamePhrase);
+    }
   }
 }
 
 function playGame() {
   let game = new guessingGame();
+
+  const hint = document.querySelector('#hint');
+  hint.addEventListener('click', () => {
+    game.giveHint();
+  });
+
   const submitGuess = document.querySelector('#submitGuess');
   submitGuess.addEventListener('click', () => {
     move();
@@ -208,12 +261,17 @@ function playGame() {
   playAgain.addEventListener('click', () => {
     game = new guessingGame();
     width = 0;
-    let elem = document.getElementById('loadingPart');
-    elem.style.width = '0%';
+    let loadingPartElem = document.getElementById('loadingPart');
+    loadingPartElem.style.width = '0%';
     let mySubmitButton = document.querySelector('#submitGuess');
     let myHintButton = document.querySelector('#hint');
     mySubmitButton.disabled = false;
     myHintButton.disabled = false;
+
+    let myGuesses = document.querySelector('#guessList');
+    myGuesses.innerHTML = '';
+    let myInfo = document.querySelector('#info');
+    myInfo.innerHTML = 'You have five attempts. Good luck!';
   });
 }
 
