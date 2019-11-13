@@ -180,3 +180,14 @@ body {
   grid-column: -2;
   grid-row: 2 / span 4;
 }
+
+#progressBar {
+  background-color: grey;
+  width: 100%;
+}
+
+#loadingPart {
+  background-color: green;
+  width: 0%;
+  height: 30px;
+}

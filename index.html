@@ -9,7 +9,7 @@
     <script src="vanillaJavascript.js" defer></script>
   </head>
   <body>
-    <div class="calculator">
+    <!-- <div class="calculator">
       <div class="calculator__display">0</div>
       <div class="calculator__keys">
         <button class="key--operator" data-action="add">+</button>
@@ -29,6 +29,22 @@
         <button data-action="decimal">.</button>
         <button data-action="clear">AC</button>
         <button class="key--equal" data-action="calculate">=</button>
+      </div>
+    </div> -->
+    <div>
+      <h1>My Guessing Game</h1>
+      <h2>Enter a number between 0 and 100!</h2>
+      <h3>Previous Guesses</h3>
+      <ul id="guessList"></ul>
+      <p id="info">You have five attempts. Good luck!</p>
+      <div>
+        <input id="input" placeholder="enter guess here" />
+        <button id="submitGuess">Submit Guess</button>
+        <button id="playAgain">Play Again</button>
+        <button id="hint">Hint</button>
+      </div>
+      <div id="progressBar">
+        <div id="loadingPart"></div>
       </div>
     </div>
   </body>
